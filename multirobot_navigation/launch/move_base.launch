@@ -1,0 +1,26 @@
+<launch>    
+  <!--- Run AMCL -->
+  <include file="$(find turtlebot3_navigation)/launch/amcl.launch" />
+
+<arg name="model" default="waffle_pi"/>
+<arg name="move_forward_only" default="false"/>
+
+
+  <!-- Define your move_base node -->
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+   <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" />
+    <rosparam file="$(find multirobot_navigation)/param/costmap_common_params_$(arg model).yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find multirobot_navigation)/param/costmap_common_params_$(arg model).yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find multirobot_navigation)/param/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find multirobot_navigation)/param/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find multirobot_navigation)/param/move_base_params.yaml" command="load" />
+    <rosparam file="$(find multirobot_navigation)/param/dwa_local_planner_params_$(arg model).yaml" command="load" />
+   
+    <param name="DWAPlannerROS/min_vel_x" value="0.0" if="$(arg move_forward_only)" />
+
+    <remap from="map" to="/map" />
+  </node>
+</launch>
+
+
+
